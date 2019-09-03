@@ -1,0 +1,29 @@
+# libraries
+import matplotlib.pyplot as plt
+import networkx as nx
+from matplotlib.pyplot import draw, show, savefig
+import math
+
+import queries
+
+# And a data frame with characteristics for your nodes
+carac = queries.load_network_graph_count('1514764800', '1546214400', 30)
+
+# Build a dataframe with your connections
+df = queries.load_network_graph_source('1514764800', '1546214400', carac['mention'].tolist())
+
+# Build your graph
+G = nx.from_pandas_edgelist(df, 'from', 'to', 'edge_value', create_using=nx.DiGraph())
+
+# Here is the tricky part: I need to reorder carac, to assign the good color to each node
+carac = carac.set_index('mention')
+carac = carac.reindex(G.nodes())
+node_color = [float(G.degree(v)) for v in G]
+edge_color = [math.log(u['edge_value']) for (v, d, u) in G.edges(data=True)]
+
+pos = nx.spring_layout(G)
+# Plot it, providing a continuous color scale with cmap:
+nx.draw(G, font_size=8, pos=pos, with_labels=True, node_size=[float(a) for a in carac['count']], node_color=node_color,
+        cmap=plt.get_cmap('Blues'), edge_color=edge_color, edge_cmap=plt.get_cmap('Blues'), alpha=1)
+draw()
+show()

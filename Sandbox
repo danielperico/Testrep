@@ -1,0 +1,25 @@
+import tweepy
+from tweepy import OAuthHandler
+
+#Access API via SandboxDPerico App (twitter account, @DanielPerico)
+
+consumer_key = 'NzQkGNfE2XWSfiMGiUlfhiTNf'
+consumer_secret = 'alQ5byt9xkBbJHuRRf8bIYPDqTu8OshBkQKvQO9SdYR8e92xQ1'
+access_token = '12544882-iHEi5mROZLlcxcnFf52kSwT2dAbQHUpP1egv1jtVf'
+access_secret = 'CVdi220hBzj9tF2gUBBeeozpQZcH4ohderx4E1UBp3zLw'
+
+auth = OAuthHandler(consumer_key, consumer_secret)
+auth.set_access_token(access_token, access_secret)
+
+api = tweepy.API(auth)
+
+# API REFERENCE: GET users/search Provides a simple, relevance-based search interface to public user accounts on Twitter.
+# Try querying by topical interest, full name, company name, location, or other criteria.
+# Exact match searches are not supported.
+
+query="economy"
+loc="Limburg"
+# Other search options: since="2015-10-10", until="2015-10-11",count=100
+
+for users in tweepy.Cursor(api.search, q=query, location=loc).items():
+    print(users.text)
